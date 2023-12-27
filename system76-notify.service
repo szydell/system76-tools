@@ -1,0 +1,9 @@
+[Unit]
+Description=Check system76 forks
+
+[Service]
+Type=simple
+ExecStart=/home/szydell/dev/76-system/system76-tools/check.sh
+
+[Install]
+WantedBy=default.target
