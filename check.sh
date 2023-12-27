@@ -7,10 +7,7 @@
 # Changelog:
 # 2023.12.27 - init
 
-
-
 REPO_LIST=("firmware-manager" "system76-acpi-dkms" "system76-dkms" "system76-driver" "system76-firmware" "system76-io-dkms" "system76-power")
-
 
 # Function to check for updates and fetch if needed
 check_for_updates() {
@@ -43,4 +40,3 @@ if [[ $notify ]]; then
     --user "${m}:${p}" \
     -T <(echo -e "From: ${m}\nTo: ${m}\nSubject: Notification: system76 update available\n\nUpgrade available:\n${behinds[*]}")
 fi
-
