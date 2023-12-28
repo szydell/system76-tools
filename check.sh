@@ -20,18 +20,18 @@ check_for_updates() {
 
 behinds=()
 
-notify=false
+notify="no"
 echo "RAPORT"
 for r in "${REPO_LIST[@]}"; do
   state=$(check_for_updates "$r")
   echo "$r: $state"
   if [[ $state == "behind" ]]; then
-    notify=true
+    notify="yes"
     behinds+=("$r")
   fi
 done
 
-if [[ $notify ]]; then
+if [[ $notify == "yes" ]]; then
   m=$(head -1 ~/.config/mail.notify)
   p=$(tail -1 ~/.config/mail.notify)
   curl -s --url 'smtps://smtp.gmail.com:465' --ssl-reqd \
