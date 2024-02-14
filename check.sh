@@ -5,17 +5,19 @@
 # Send an e-mail when forked repo is behind.
 #
 # Changelog:
+# 2024.02.14 - don't check on github, but fetch locally and check git log
 # 2023.12.27 - init
 
 REPO_LIST=("firmware-manager" "system76-acpi-dkms" "system76-dkms" "system76-driver" "system76-firmware" "system76-io-dkms" "system76-power")
+DEV_DIR="/home/szydell/dev/76-system/"
 
-# Function to check for updates and fetch if needed
+# Function to check for updates
 check_for_updates() {
-  if curl -s "https://github.com/szydell/${1}" | grep -qE "commit.*behind"; then
-    echo "behind"
-  else
-    echo "up to date"
-  fi
+  cd $DEV_DIR/"${1}" || echo "error"
+  git fetch upstream > /dev/null 2>&1
+  git checkout master > /dev/null 2>&1
+  commits_behind=$(git log master..upstream/master 2>&1 | grep -c "commit")
+  echo "$commits_behind"
 }
 
 behinds=()
@@ -23,11 +25,11 @@ behinds=()
 notify="no"
 echo "RAPORT"
 for r in "${REPO_LIST[@]}"; do
-  state=$(check_for_updates "$r")
-  echo "$r: $state"
-  if [[ $state == "behind" ]]; then
+  commits_behind=$(check_for_updates "$r")
+  echo "$r -> commits behind: $commits_behind"
+  if [[ "$commits_behind" -gt "0" ]]; then
     notify="yes"
-    behinds+=("$r")
+    behinds+=("$r->$commits_behind")
   fi
 done
 
